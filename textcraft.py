@@ -8,6 +8,15 @@ Programmed on python 2.7. Warning: Untested code ahead.
 # Used to call system commands to clear the screen.
 import os
 
+# Python 3 and python 2 use different input methods. version_info tells
+# this script which version of python is running.
+from sys import version_info
+
+# Determine which input function to use.
+get_input = input
+if version_info[0] < 3:
+    get_input = raw_input
+
 
 # To prevent the user from having to type a lot of choices out, we can use
 # these dictionaries to translate back and fourth between shortcuts.
@@ -111,41 +120,41 @@ def get_room_movement(x, y, room):
     if x > left:
         options.append('left')
     else:
-        print 'Hit a wall.'
+        print('Hit a wall.')
 
     if x < right:
         options.append('right')
     else:
-        print 'Hit a wall.'
+        print('Hit a wall.')
 
     if y < top:
         options.append('up')
     else:
-        print 'Hit a wall.'
+        print('Hit a wall.')
 
     if y > bottom:
         options.append('down')
     else:
-        print 'Hit a wall.'
+        print('Hit a wall.')
 
     # See if you can exit a room.
     for wall, position in room['doors']:
         # Check for doors on all sides of the room.
         if wall == 'left' and x == left and y == position:
             options.append('left')
-            print 'Found a door.'
+            print('Found a door.')
 
         if wall == 'right' and x == right and y == position:
             options.append('right')
-            print 'Found a door.'
+            print('Found a door.')
 
         if wall == 'bottom' and y == bottom and x == position:
             options.append('down')
-            print 'Found a door.'
+            print('Found a door.')
 
         if wall == 'top' and y == top and x == position:
             options.append('up')
-            print 'Found a door.'
+            print('Found a door.')
 
     return options
 
@@ -163,41 +172,41 @@ def get_outdoor_movement(x, y, rooms):
         # Hit the left wall.
         if y >= bottom and y <= top and x == left - 1:
             del options[options.index('right')]
-            print 'Hit the %s room.' % name
+            print('Hit the %s room.' % name)
 
         # Hit the right wall.
         if y >= bottom and y <= top and x == right + 1:
             del options[options.index('left')]
-            print 'Hit the %s room.' % name
+            print('Hit the %s room.' % name)
 
         # Hit the top wall.
         if x >= left and x <= right and y == top + 1:
             del options[options.index('down')]
-            print 'Hit the %s room.' % name
+            print('Hit the %s room.' % name)
 
         # Hit the bottom wall.
         if x >= left and x <= right and y == bottom - 1:
             del options[options.index('up')]
-            print 'Hit the %s room.' % name
+            print('Hit the %s room.' % name)
 
         # See if you can enter a room.
         for wall, position in room['doors']:
             # Check for doors on all sides of the room.
             if wall == 'left' and x == left - 1 and y == position:
                 options.append('right')
-                print 'Found a door.'
+                print('Found a door.')
 
             if wall == 'right' and x == right + 1 and y == position:
                 options.append('left')
-                print 'Found a door.'
+                print('Found a door.')
 
             if wall == 'bottom' and y == bottom - 1 and x == position:
                 options.append('up')
-                print 'Found a door.'
+                print('Found a door.')
 
             if wall == 'top' and y == top + 1 and x == position:
                 options.append('down')
-                print 'Found a door.'
+                print('Found a door.')
 
     return options
 
@@ -228,12 +237,12 @@ def check_state(x, y, rooms):
     # Check to see if the player is in a room.
     room = get_current_room(x, y, rooms)
     if room:
-        print 'You are currently in %s.' % room['name']
+        print('You are currently in %s.' % room['name'])
 
         # Check for treasure.
         treasure = check_for_treasure(x, y, room)
         if treasure:
-            print 'You are currently standing on %s.' % treasure
+            print('You are currently standing on %s.' % treasure)
 
             # The user can pick up the treasure.
             options.append('pick up')
@@ -249,13 +258,13 @@ def get_user_input(options):
     choices = ', '.join([CHOICES[option] for option in options])
 
     # Prompt the user.
-    print 'You can do the following: %s' % choices
+    print('You can do the following: %s' % choices)
 
     # Keep asking until the user picks a correct option.
     keep_trying = True
     while keep_trying:
         # Get the option.
-        option = raw_input('Please type your option: ')
+        option = get_input('Please type your option: ')
 
         # Check to make sure the option is valid.
         if option in SHORTCUTS and SHORTCUTS[option] in options:
@@ -310,11 +319,11 @@ def main():
         clear()
 
         # Print the player's current location.
-        print 'You are at: %d, %d' % (x, y)
+        print('You are at: %d, %d' % (x, y))
 
         # Print the player's item.
         if item:
-            print 'You have: %s' % item
+            print('You have: %s' % item)
 
         # Check the current state of the game.
         room, treasure, options = check_state(x, y, rooms)
@@ -341,7 +350,7 @@ def main():
                                          treasure, option)
 
         # Print a spacer to make turns clear.
-        print
+        print()
 
 
 # If the file is called directly, run the main function.
